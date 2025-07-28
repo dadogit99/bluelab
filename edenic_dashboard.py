@@ -73,7 +73,8 @@ def main():
     if not history.empty:
         now = _dt.datetime.utcnow()
         cutoff = now - _dt.timedelta(hours=24)
-        history = history[history["time"] >= cutoff]
+        history["time"] = pd.to_datetime(history["time"])
+    history = history[history["time"] >= cutoff]
 
     # Display latest values
     if not history.empty:
