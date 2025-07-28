@@ -82,6 +82,7 @@ def main():
         history = history[pd.notnull(history["time"])]
         history = history[history["time"] >= cutoff]
 
+
     # Display latest values
     if not history.empty:
         latest_row = history.iloc[-1]
