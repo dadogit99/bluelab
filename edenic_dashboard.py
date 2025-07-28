@@ -111,6 +111,8 @@ def main() -> None:
         st.info("Waiting for first reading …")
 
     if len(history) > 1:
+        history["time"] = pd.to_datetime(history["time"], errors="coerce")
+        history = history[pd.notnull(history["time"])]
         history = history.set_index("time")
         history.index = history.index.tz_convert(None)
         st.line_chart(history)
