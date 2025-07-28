@@ -71,8 +71,8 @@ def main():
 
     # Filter last 24 hours
     if not history.empty:
-        now = datetime.utcnow()
-        cutoff = now - timedelta(hours=24)
+        now = _dt.datetime.utcnow()
+        cutoff = now - _dt.timedelta(hours=24)
         history = history[history["time"] >= cutoff]
 
     # Display latest values
