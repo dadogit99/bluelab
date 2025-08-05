@@ -1,59 +1,61 @@
-from datetime import datetime, timedelta
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
 import requests
 import pandas as pd
+from datetime import datetime, timedelta
+import pytz
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
 
-# Streamlit page config
-st.set_page_config(page_title="Edenic Telemetry Dashboard", layout="wide")
+# Trigger auto-refresh every 60 seconds
+st_autorefresh(interval=60 * 1000, key="datarefresh")
 
-# Load secrets
-api_key = st.secrets["general"]["api_key"]
-device_id = st.secrets["general"]["device_id"]
+st.title("🌿 Edenic Telemetry Dashboard")
 
-# Google Sheets credentials from secrets
-creds_dict = st.secrets["google_service_account"]
+# Convert secrets to dict
+creds_dict = dict(st.secrets["google_service_account"])
 creds_json = json.dumps(creds_dict)
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(creds_json), scope)
-gc = gspread.authorize(credentials)
+client = gspread.authorize(credentials)
+sheet = client.open("Edenic Telemetry Log").sheet1  # Ensure this matches your sheet name
 
-# Open the spreadsheet
-sheet = gc.open("Edenic Telemetry Log").sheet1
+API_KEY = st.secrets["general"]["api_key"]
+DEVICE_ID = st.secrets["general"]["device_id"]
+EDENIC_API = f"https://api.edenic.io/api/v1/telemetry/{DEVICE_ID}?keys=ph%2Celectrical_conductivity%2Ctemperature"
 
-# API URL
-url = f"https://api.edenic.io/v1/device/{device_id}/latest"
+def fetch_telemetry():
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    response = requests.get(EDENIC_API, headers=headers)
+    response.raise_for_status()
+    return response.json()
 
-# Get data from Edenic API
-headers = {"Authorization": f"Bearer {api_key}"}
-response = requests.get(url, headers=headers)
-data = response.json()
+def convert_c_to_f(c):
+    return round((c * 9/5) + 32, 2)
 
-# Process API data
-if "measurements" in data:
-    measurements = data["measurements"]
-    timestamp = datetime.strptime(data["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ")
-    eastern_time = timestamp - timedelta(hours=4)  # Convert from UTC to ET manually
+def main():
+    try:
+        data = fetch_telemetry()
+        ph = data.get("ph", {}).get("value", "N/A")
+        ec = data.get("electrical_conductivity", {}).get("value", "N/A")
+        temp_c = data.get("temperature", {}).get("value", "N/A")
+        temp_f = convert_c_to_f(temp_c) if isinstance(temp_c, (int, float)) else "N/A"
 
-    # Extract and convert values
-    ph = measurements.get("ph")
-    ec = measurements.get("ec")
-    temp_c = measurements.get("water_temperature")
-    temp_f = round((temp_c * 9/5) + 32, 2) if temp_c is not None else None
+        # Display current readings
+        st.metric(label="pH", value=ph)
+        st.metric(label="EC", value=ec)
+        st.metric(label="Water Temp (°F)", value=temp_f)
 
-    # Display current values
-    st.title("🌱 Edenic Telemetry Dashboard")
-    st.subheader(f"Last updated: {eastern_time.strftime('%Y-%m-%d %I:%M:%S %p')} ET")
-    col1, col2, col3 = st.columns(3)
-    col1.metric("pH", ph)
-    col2.metric("EC", ec)
-    col3.metric("Water Temp (°F)", temp_f)
+        # Eastern Time timestamp
+        now = datetime.now(pytz.timezone("US/Eastern"))
+        now_str = now.strftime("%Y-%m-%d %H:%M:%S")
+        st.caption(f"Last updated: {now_str} ET")
 
-    # Update Google Sheet
-    now_str = eastern_time.strftime("%Y-%m-%d %H:%M:%S")
-    sheet.append_row([now_str, ph, ec, temp_f])
+        # Save to Google Sheet
+        sheet.append_row([now_str, ph, ec, temp_f])
 
-else:
-    st.error("Failed to load telemetry data.")
+    except Exception as e:
+        st.error(f"Error: {e}")
+
+main()
