@@ -2,20 +2,36 @@ from __future__ import annotations
 
 import datetime as _dt
 import logging
+import json
 from typing import Optional, Tuple
 
 import pandas as pd
 import requests
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
+import gspread
+from google.oauth2.service_account import Credentials
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
 
-API_KEY: str = "ed_dzv4ddrw1oq9ca7sn75xjdyqejxq496ku8l6sk9u4i3pf5f86x8axv8bwq9r4unh"
-DEVICE_ID: str = "2d9b5760-afe9-11ee-a8fb-b92f34d9b31d"
+API_KEY: str = st.secrets["general"]["api_key"]
+DEVICE_ID: str = st.secrets["general"]["device_id"]
 POLL_INTERVAL_SEC: int = 60
+SHEET_NAME: str = "Edenic Telemetry Log"
+
+# ---------------------------------------------------------------------------
+# Setup Google Sheets client
+# ---------------------------------------------------------------------------
+
+gsa_info = dict(st.secrets["google_service_account"])
+credentials = Credentials.from_service_account_info(gsa_info, scopes=[
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+])
+gs_client = gspread.authorize(credentials)
+sheet = gs_client.open(SHEET_NAME).sheet1
 
 # ---------------------------------------------------------------------------
 # Helper functions
@@ -68,6 +84,15 @@ def append_reading(df: pd.DataFrame, timestamp: Optional[_dt.datetime], ph: Opti
         return pd.concat([df, new_row], ignore_index=True)
     return df
 
+def export_to_sheets(ts: _dt.datetime, ph: float, ec: float, temp: float) -> None:
+    now_est = ts.astimezone(_dt.timezone(_dt.timedelta(hours=-5)))  # Eastern time
+    sheet.append_row([
+        now_est.strftime("%Y-%m-%d %H:%M:%S"),
+        f"{ph:.2f}" if ph is not None else "",
+        f"{ec:.2f}" if ec is not None else "",
+        f"{temp:.2f}" if temp is not None else ""
+    ])
+
 # ---------------------------------------------------------------------------
 # Streamlit application
 # ---------------------------------------------------------------------------
@@ -86,7 +111,12 @@ def main() -> None:
 
     try:
         ts, ph_val, ec_val, temp_val = get_latest_telemetry(device_id=DEVICE_ID, api_key=API_KEY)
+        if ts:
+            est_time = ts.astimezone(_dt.timezone(_dt.timedelta(hours=-5)))
+            st.caption(f"Last updated: {est_time.strftime('%Y-%m-%d %I:%M:%S %p')} (EST)")
         st.session_state["history"] = append_reading(st.session_state["history"], ts, ph_val, ec_val, temp_val)
+        if ts and ph_val is not None and ec_val is not None and temp_val is not None:
+            export_to_sheets(ts, ph_val, ec_val, temp_val)
     except requests.HTTPError as http_err:
         logging.exception("HTTP error while fetching telemetry")
         st.error(f"HTTP error: {http_err}")
@@ -105,12 +135,6 @@ def main() -> None:
         col1.metric("pH", f"{latest_row['pH']:.2f}" if latest_row['pH'] is not None else "—")
         col2.metric("EC", f"{latest_row['EC']:.2f}" if latest_row['EC'] is not None else "—")
         col3.metric("Temperature (°F)", f"{latest_row['temperature']:.2f}" if latest_row['temperature'] is not None else "—")
-
-        # Show timestamp in Eastern Time
-        eastern = _dt.timezone(_dt.timedelta(hours=-4))
-        if isinstance(latest_row["time"], _dt.datetime):
-            local_time = latest_row["time"].astimezone(eastern)
-            st.caption(f"Last updated: {local_time.strftime('%Y-%m-%d %I:%M:%S %p EDT')}")
     else:
         st.info("Waiting for first reading …")
 
@@ -126,7 +150,8 @@ def main() -> None:
     with st.expander("About this app", expanded=False):
         st.markdown(
             "This dashboard uses the Edenic API to poll for telemetry every 60 seconds. "
-            "It stores recent readings and displays a 24-hour chart of pH, EC, and temperature."
+            "It stores recent readings and displays a 24-hour chart of pH, EC, and temperature. "
+            "Latest readings are also exported to Google Sheets."
         )
 
 if __name__ == "__main__":
