@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import datetime as _dt
@@ -100,13 +99,18 @@ def main() -> None:
 
     history = st.session_state["history"].copy()
 
-
     if not history.empty:
         latest_row = history.iloc[-1]
         col1, col2, col3 = st.columns(3)
         col1.metric("pH", f"{latest_row['pH']:.2f}" if latest_row['pH'] is not None else "—")
         col2.metric("EC", f"{latest_row['EC']:.2f}" if latest_row['EC'] is not None else "—")
         col3.metric("Temperature (°F)", f"{latest_row['temperature']:.2f}" if latest_row['temperature'] is not None else "—")
+
+        # Show timestamp in Eastern Time
+        eastern = _dt.timezone(_dt.timedelta(hours=-4))
+        if isinstance(latest_row["time"], _dt.datetime):
+            local_time = latest_row["time"].astimezone(eastern)
+            st.caption(f"Last updated: {local_time.strftime('%Y-%m-%d %I:%M:%S %p EDT')}")
     else:
         st.info("Waiting for first reading …")
 
