@@ -49,8 +49,8 @@ from streamlit_autorefresh import st_autorefresh
 # API key must be supplied in the ``Authorization`` header of every request
 #【147297304516579†L46-L54】, and you must specify the device ID in the URL
 # path when requesting telemetry【662520216656674†L33-L48】.
-API_KEY: str = "YOUR_API_KEY_HERE"
-DEVICE_ID: str = "YOUR_DEVICE_ID_HERE"
+API_KEY: str = "ed_dzv4ddrw1oq9ca7sn75xjdyqejxq496ku8l6sk9u4i3pf5f86x8axv8bwq9r4unh"
+DEVICE_ID: str = "2d9b5760-afe9-11ee-a8fb-b92f34d9b31d"
 
 # The polling interval in seconds.  The API only allows one call per minute
 # per device, so a 60 second interval honours this limitation【662520216656674†L33-L41】.
