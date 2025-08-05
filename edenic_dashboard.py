@@ -35,7 +35,7 @@ data = response.json()
 if "measurements" in data:
     measurements = data["measurements"]
     timestamp = datetime.strptime(data["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ")
-    eastern_time = timestamp - timedelta(hours=4)  # UTC to Eastern Time manually
+    eastern_time = timestamp - timedelta(hours=4)  # Convert from UTC to ET manually
 
     # Extract and convert values
     ph = measurements.get("ph")
@@ -53,4 +53,7 @@ if "measurements" in data:
 
     # Update Google Sheet
     now_str = eastern_time.strftime("%Y-%m-%d %H:%M:%S")
-    sheet.append_row([now_str, ph, ec,_]()_
+    sheet.append_row([now_str, ph, ec, temp_f])
+
+else:
+    st.error("Failed to load telemetry data.")
