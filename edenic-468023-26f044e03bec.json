@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "edenic-468023",
+  "private_key_id": "26f044e03becf73286be8e863ff71ce7b0b12662",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCROBcZa23DW45b\n8pMWQyfjgMCZQ43V8LKQpk5ana127ufSfy7QbCXvXniTNmi+YjWdEkmS3S16ywTP\nSU6cGAPT9JJqNByDIf4jsT4WumD0cdsROsv4LbQkcyhZkH/BCDI/srlsee9j8lUA\njzX0frYoImA4q9Re3P5fsq1rsim50wCqJrYM2avGOZO7qdIWnNV0Drt3tppQOp1E\nKO0MMbhgEUpzgpgi03HXLbZUN6qPf2/JuOYoj4U+Ij4JNvAC1Ev3RC/7MNgXHGAM\nfd3TAlJiBCqqPdggqg65kc4sMavLMlYPRiZtD8WZkYaRpjrPpl5urbdeufmoVgws\nLbO6IE9DAgMBAAECggEAA8RUtRAYVMz3MGNmdVlgm4InfNJHx5jqyN3Hgoo8ia1A\nzjEGYdmsUj09G3R52xZpFZ330ptyJpFFmqroIxxsXP8nHSIk6zHiicJ7PdOv2Cdr\n61J/H/zvg1KJZWleJv+zbfuQ28N99jW/BriwSZtP1lKt9Epgw+UvpAPag8SnWG6a\nvNN4leJ/z35EhozuzwkzvZjPMBGgbW3v5b7B+Fe+VuJySYUrpjDv/WTetekQT52a\nFoq7zZBM6fgArlqPjdfEfSsHOt73zFCbO6Hv3lIr1fczs6f/QmUKAmXDLE5q910L\nJFpW3XFZ38Z95GX2ogl5n0/Gn/348XWCKtk+S9rH4QKBgQDMMPKQqwp2U45yPoUO\n42m5PYZo0AtkjZmQ38NRScQT7P/BzGm5OPJtCIj/UEMfnfk/01ygstgZIVW9HKJ+\nScdSP0EG4vqrwhsv0gskre4Qvy2F5GbAzXdKH6tCpIwFWsBNQ5aOFtBMfracDErj\nkp/7dEvqXRJB0tAr0baBg5ujFQKBgQC2EKn+oJeJei+lR+q7X8WqjJYPDyaeHAYL\nPD3lYcs0nlHPIg8OmHkV7KGv+ItmGP3MjW1i7ivn2wEclCXtJPlZWh402wsBEhUi\nVpUh6lf/W02ojxJI9cnl0L/CCE+fi4zDUJU1lXZj2lkouvzq0JXMRXcxomS3UT0M\nRXjUrtOe9wKBgQCIe0sW0YyLrKvwxsMvQWggTfRySGTlEBSOFlK6GcE6xFXrFpOw\nH1VC9cqERQSotHGubLtkGkaA/ZwObH5cRTo6SldPoBWHCpYbb5zNJoiSnwZxkUnx\nIyTR4bsaL1v8FD2nJz8RuEQAbU3nnfvMguv2KjS38P/MCXnlYCZKCUrVRQKBgA3X\nGnUm1B45UaHo46k20Jn0cfvXFQJz8umrvLDRTFdFqcZrOmXLpXjLMkdkR4SNZc3E\n+onIvUG03lLD2FY8t0/Zj+5IsH92VnDz0AZyABqDYFXt+l/df2mfAtTHOPZR73Nx\njsYyBHv2v0xfWpanIJwUs8jsJWfiHxftuA/C8odlAoGBAIXjQLX3fJ826yxhmMEH\n3mHCBsDNs3LPBIY+rz5KBkNFlBXZ0xv1Oh0T6Bo7QbW7bkvo/3c5vgOsxnFphYyX\nzyKdYoVbk4j65w3rICaDoOhc5F09IVSGeCNV1EbNRukid22vn31K2L9G02cvgjmz\nR9jeJuB+AV/wFZ1cw2tAB86S\n-----END PRIVATE KEY-----\n",
+  "client_email": "edenicstelemetry@edenic-468023.iam.gserviceaccount.com",
+  "client_id": "116508953215839271481",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/edenicstelemetry%40edenic-468023.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
