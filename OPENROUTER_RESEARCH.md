@@ -4,6 +4,8 @@
 
 OpenRouter (openrouter.ai) is a **unified API gateway and marketplace** for large language models. It acts as an abstraction layer between your application and dozens of AI providers, giving you access to **500+ models from 60+ providers** through a single API endpoint and a single API key.
 
+Founded by **Alex Atallah** (co-founder of OpenSea), OpenRouter has raised a **Series A from Sequoia, Andreessen Horowitz, and Menlo Ventures**.
+
 - **250k+ apps** use OpenRouter
 - **4.2M+ users** globally
 - Handles **billions of requests** and **trillions of tokens** weekly
@@ -37,28 +39,38 @@ The API is **fully OpenAI-compatible** — most integrations require changing on
 ### 2. Intelligent Routing & Fallbacks
 - Automatic provider selection based on cost, latency, and availability
 - Automatic failover if a provider is down or rate-limited
-- Model variants: `:nitro` (faster responses) and `:floor` (most cost-effective)
+- Model variants:
+  - `:free` — Always free, with low rate limits
+  - `:extended` — Longer-than-usual context length
+  - `:nitro` — Optimized for speed
+  - `:floor` — Most cost-effective
+  - `:exacto` — Only OpenRouter-curated high-quality endpoints
 
-### 3. Multimodal Support
+### 3. BYOK (Bring Your Own Key)
+- Configure your own provider API keys (e.g., your own OpenAI key)
+- OpenRouter prioritizes routing to your own endpoints
+- 5% fee on upstream usage when using your own keys
+
+### 4. Multimodal Support
 - Text, images, PDFs, and document inputs
 - Tool calling / function calling
 - Web search integration
 - Reasoning capabilities
 
-### 4. Centralized Billing
+### 5. Centralized Billing
 - Single credit balance across all providers
 - Pay-as-you-go with per-token billing
 - No monthly fees or minimum commitments
 - Auto-replenishment available
 
-### 5. Privacy & Security
+### 6. Privacy & Security
 - Zero-logging by default (prompts and completions are not logged)
 - Only metadata logged (timestamps, model used, token counts)
 - Opt-in logging for a 1% usage discount
 - Provider routing respects privacy settings
 - GDPR compliance and EU region locking available
 
-### 6. Enterprise Features
+### 7. Enterprise Features
 - Custom data policies
 - Observability integrations (Langfuse, Datadog, Braintrust)
 - Token usage, cost, and latency monitoring
@@ -109,10 +121,12 @@ Browse all models: https://openrouter.ai/models
 ### Key Pricing Details
 - **No markup** — OpenRouter passes through provider pricing directly
 - **Per-token billing** — Input and output tokens priced separately
-- **Revenue model** — Small fee charged when purchasing credits (Stripe or crypto)
+- **Credit purchase fees** — 5.5% on credit card (min $0.80); 5% on crypto (no minimum)
+- **BYOK fee** — 5% on upstream usage when using your own API keys
 - **Payment methods** — Credit/debit cards, crypto (USDC), bank transfers
-- **Credit expiry** — Credits may expire after one year of inactivity
+- **Credit expiry** — No expiration on credits
 - **Refunds** — Available within 24 hours of purchase for unused credits
+- **Free tier caps** — 50 requests/day, 20 requests/min; purchasing 10+ credits raises free-model cap to 1,000 requests/day
 
 Detailed pricing: https://openrouter.ai/pricing
 
@@ -188,11 +202,16 @@ curl https://openrouter.ai/api/v1/chat/completions \
 
 | Consideration | Details |
 |---|---|
-| **Added latency** | Extra network hop adds ~200–500ms; may be a dealbreaker for real-time voice/low-latency apps |
-| **Free tier limits** | Severely rate-limited (requests per day) |
+| **Added latency** | Typically ~15ms overhead under normal conditions, but can be 200–500ms+ under load; during peak events (e.g., Black Friday 2025), p99 latency reportedly hit 10 seconds |
+| **Free tier limits** | 50 requests/day, 20 requests/min without credits |
 | **No volume discounts** on pay-as-you-go | Volume pricing is enterprise-only |
-| **Credit purchase fees** | Stripe and crypto payments have processing fees |
-| **Provider dependency** | If all providers for a model are down, OpenRouter can't help |
+| **Credit purchase fees** | 5.5% on credit card, 5% on crypto — compounds at high volume |
+| **No public SLAs** | No published uptime guarantees; enterprise customers must negotiate terms individually |
+| **Dynamic pricing risk** | Model pricing and availability can change; some users have reported unexpected cost spikes |
+| **No semantic caching** | Repeated identical requests are billed at full price |
+| **Extra data hop** | Every request routes through OpenRouter's infrastructure, which may be a concern for strict GDPR/HIPAA/data residency requirements |
+| **Support** | Primarily via Discord rather than traditional support channels |
+| **Quality variance** | ~5% output quality variance and ~15% more hallucinations reported on niche domains when using cost-optimized routing |
 
 ---
 
@@ -209,6 +228,22 @@ curl https://openrouter.ai/api/v1/chat/completions \
 | Authentication | https://openrouter.ai/docs/api/reference/authentication |
 | Responses API (Beta) | https://openrouter.ai/docs/api/reference/responses/overview |
 | FAQ | https://openrouter.ai/docs/faq |
+| Providers | https://openrouter.ai/providers |
+| Provider Routing | https://openrouter.ai/docs/guides/routing/provider-selection |
+| Tool Calling | https://openrouter.ai/docs/guides/features/tool-calling |
+
+---
+
+## Additional SDK & Framework Support
+
+Beyond the OpenAI SDK, OpenRouter integrates with:
+
+- **OpenRouter native SDK** — `@openrouter/sdk` (TypeScript) with type-safe tool definitions and automatic multi-turn agentic loops
+- **Vercel AI SDK** — via `@openrouter/ai-sdk-provider`
+- **LangChain** and **LlamaIndex**
+- **PydanticAI** and **Mastra**
+- **Effect AI SDK**
+- **Arize** (observability)
 
 ---
 
